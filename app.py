@@ -7,13 +7,17 @@ app = Flask(__name__)
 # Load the trained model
 model = pickle.load(open('model.pkl', 'rb'))
 
-@app.route('/api/predict', methods=['POST'])
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/predict', methods=['POST'])
 def predict():
     if request.method == 'POST':
-        # Extract data from request body (JSON format)
+        # Extract data from form
         features = ['fixed_acidity', 'volatile_acidity', 'citric_acid', 'residual_sugar', 'chlorides',
                     'free_sulfur_dioxide', 'total_sulfur_dioxide', 'density', 'pH', 'sulphates', 'alcohol']
-        data = [request.json.get(feature, 0.0) for feature in features]
+        data = [float(request.form[feature]) for feature in features]
         final_features = np.array([data])
         
         # Make prediction
@@ -21,6 +25,7 @@ def predict():
         
         output = 'Good Quality' if prediction == 1 else 'Bad Quality'
         
-        return {'prediction_text': f'Wine Quality: {output}'}
+        return render_template('index.html', prediction_text=f'Wine Quality: {output}')
 
-app = app
+if __name__ == "__main__":
+    app.run(debug=True)
