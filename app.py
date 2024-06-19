@@ -23,5 +23,4 @@ def predict():
         
         return {'prediction_text': f'Wine Quality: {output}'}
 
-# Vercel expects to export a Flask app object as 'app'
 app = app
